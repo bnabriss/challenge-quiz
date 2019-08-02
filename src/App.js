@@ -12,7 +12,9 @@ import questions from './questions.json';
 
 import StackProgress from './components/StackProgress';
 import Question from './components/Question';
+import shuffle from './utils/shuffle.js';
 
+shuffle(questions);
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,10 +36,10 @@ function App() {
   const [score, setScore] = useState(0);
   const [maxScore, setMaxScore] = useState(0);
   const [minScore, setMinScore] = useState(0);
-
+  
   const completed = Math.min((index + 1) * 100 / questions.length, 100);
   let answeredCount = index;
-
+  
   useEffect(() => {
     answeredCount = Math.min(questions.length, index + (answer ? 1 : 0));
     setScore(correctCount * 100 / (answeredCount));
