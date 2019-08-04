@@ -5,11 +5,12 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import StarRatings from 'react-star-ratings';
 
 import shuffle from '../utils/shuffle';
 import questions from '../questions.json';
+import DifficultyProgress from './DifficultyStars';
 
-import DifficultyProgress from './DifficultyProgress';
 
 const useStyles = makeStyles(theme => ({
  
@@ -33,34 +34,42 @@ const useStyles = makeStyles(theme => ({
 const Question = ({ index, setIndex, correctCount, setCorrectCount, answer, setAnswer }) => {
   const classes = useStyles();
   const [choices, setChoices] = useState([]);
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [selectedButtonProps, setSelectedButtonProps] = useState({});
 
   useEffect(() => {
     setChoices(shuffle([questions[index].correct_answer, ...questions[index].incorrect_answers]));
     setAnswer(null);
+    setSelectedIndex(null);
   }, [index]);
   useEffect(() => {
     if (answer === questions[index].correct_answer) {
       setCorrectCount(correctCount + 1);
       setIsCorrect(true);
+      setSelectedButtonProps({variant : "contained", color : "primary"});
     } else {
       setIsCorrect(false);
+      setSelectedButtonProps({variant : "contained", color : "secondary"});
     }
   }, [answer]);
 
-  const putAnswer = (str) => {
-    setAnswer(str);
+  const putAnswer = (str, key) => {
+    if(!answer){
+      setAnswer(str);
+      setSelectedIndex(key);
+    }
   }
 
   return (
     <Box className={classes.box}>
-      <Typography variant="h4" component="h3" align="center">
+      <Typography variant="h4" component="h3" >
         Question {index + 1} of {questions.length}.
       </Typography>
-      <Typography component="p" align="center">
+      <Typography component="p" >
         {decodeURIComponent(questions[index].category)}.
-            </Typography>
-      <Grid container justify="center" >
+      </Typography>
+      <Grid container  >
         <Grid xs={4} item>
           <DifficultyProgress level={questions[index].difficulty} />
         </Grid>
@@ -74,7 +83,15 @@ const Question = ({ index, setIndex, correctCount, setCorrectCount, answer, setA
         {
           choices.map((str, key) => (
             <Grid className={classes.answer} xs={6} item key={key}>
-              <Button variant="outlined" className={classes.button} onClick={e => putAnswer(str)} disabled={!!answer}>
+              <Button fullWidth 
+              variant="outlined" 
+              className={classes.button} 
+              onClick={e => putAnswer(str, key)} 
+              
+              disabled={!!answer && key !== selectedIndex && str !== questions[index].correct_answer } 
+              {...(key === selectedIndex ? selectedButtonProps : {})}
+              {...(answer && str === questions[index].correct_answer ? {variant : "contained", color : "primary"} : {} )}
+              >
                 {decodeURIComponent(str)}
               </Button>
             </Grid>

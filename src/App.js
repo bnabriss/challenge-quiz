@@ -18,7 +18,7 @@ shuffle(questions);
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(0, 0),
+    // padding: theme.spacing(0,  14),
     marginTop: 40
   },
   nextButton: {
@@ -36,12 +36,12 @@ function App() {
   const [score, setScore] = useState(0);
   const [maxScore, setMaxScore] = useState(0);
   const [minScore, setMinScore] = useState(0);
-  
-  const completed = Math.min((index + 1) * 100 / questions.length, 100);
+  const [completed, setCompleted] = useState(0);
   let answeredCount = index;
-  
+
   useEffect(() => {
     answeredCount = Math.min(questions.length, index + (answer ? 1 : 0));
+    setCompleted(Math.min((answeredCount) * 100 / questions.length, 100));
     setScore(correctCount * 100 / (answeredCount));
     setMaxScore((questions.length - (answeredCount - correctCount)) * 100 / questions.length);
     setMinScore((correctCount) * 100 / questions.length);
@@ -53,32 +53,35 @@ function App() {
       <Container maxWidth="md">
         <Paper className={classes.root}>
           <LinearProgress color="secondary" variant="determinate" value={completed} />
-          {
-            (index >= questions.length) ?
-              <Box mt={5} className={classes.nextButton}>
-                <Typography variant="h4" component="h3" align="center">
-                  Thanks for your time your final Score is : {(score).toFixed(0)} %
-                </Typography>
-              </Box>
-              :
-              <Question index={index} setIndex={setIndex} correctCount={correctCount} setCorrectCount={setCorrectCount} answer={answer} setAnswer={setAnswer} />
-          }
-          <Box mt={5} className={classes.nextButton}>
-            <Grid container direction="row" justify="space-between" >
-              <Grid xs={6} style={{ textAlign: 'left' }} item>
-                {!answeredCount ? '' : <>Score : {(score).toFixed(0)} %</>}
+          <Box px={15}>
+            {
+              (index >= questions.length) ?
+                <Box mt={5} className={classes.nextButton}>
+                  <Typography variant="h4" component="h3" align="center">
+                    Thanks for your time your final Score is : {(score).toFixed(0)} %
+                  </Typography>
+                </Box>
+                :
+                <Question index={index} setIndex={setIndex} correctCount={correctCount} setCorrectCount={setCorrectCount} answer={answer} setAnswer={setAnswer} />
+            }
+            <Box mt={5} className={classes.nextButton}>
+              <Grid container direction="row" justify="space-between" >
+                <Grid xs={6} style={{ textAlign: 'left' }} item>
+                  {!answeredCount ? '' : <>Score : {(score).toFixed(0)} %</>}
+                </Grid>
+                <Grid xs={6} style={{ textAlign: 'right' }} item>
+                  Max score : {(maxScore).toFixed()} %
               </Grid>
-              <Grid xs={6} style={{ textAlign: 'right' }} item>
-                Max score : {(maxScore).toFixed()} %
               </Grid>
-            </Grid>
+            </Box>
+            <StackProgress stacks={[
+              { value: maxScore, color: 'orange' },
+              { value: score, color: 'green' },
+              { value: minScore, color: 'yellow' },
+            ]} />
           </Box>
-          <StackProgress stacks={[
-            {value:maxScore, color:'orange'},
-            {value:score, color:'green'},
-            {value:minScore, color:'yellow'},
-          ]} />
         </Paper>
+
       </Container>
     </div>
   )
