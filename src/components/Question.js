@@ -105,7 +105,7 @@ const Question = ({ index, setIndex, correctCount, setCorrectCount, answer, setA
       </Box>
       <Box mt={5} className={classes.nextButton}>
         <Button variant="contained" className={classes.button} onClick={e => setIndex(index + 1)} disabled={!answer}>
-          {index == questions.length ? 'Finish Quiez' : 'Next question'}
+          {index == questions.length - 1 ? 'Finish Quiez' : 'Next question'}
         </Button>
       </Box>
     </Box>

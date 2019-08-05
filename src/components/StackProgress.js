@@ -12,7 +12,8 @@ const useStyles = makeStyles(theme => ({
     background: '#e0e0e0',
     position: 'absolute',
     left: 0,
-    top: 0
+    top: 0,
+    transition : 'width .2s'
   }
 }));
 
